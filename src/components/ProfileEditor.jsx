@@ -203,21 +203,34 @@ export default function ProfileEditor({ onAnalyze, loading, targets }) {
                 value={selectedCompany} 
                 onChange={(e) => setSelectedCompany(e.target.value)}
               >
-                {targets?.companies?.map(c => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
-                )) || (
+                {targets?.companies?.length > 0 ? (
+                  targets.companies.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))
+                ) : (
                   <>
                     <option value="Zoho">Zoho</option>
                     <option value="Google">Google</option>
                     <option value="Amazon">Amazon</option>
                     <option value="Microsoft">Microsoft</option>
+                    <option value="Meta">Meta</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Netflix">Netflix</option>
                     <option value="TCS">TCS</option>
                     <option value="Infosys">Infosys</option>
+                    <option value="Wipro">Wipro</option>
+                    <option value="Accenture">Accenture</option>
+                    <option value="Cognizant">Cognizant</option>
+                    <option value="Capgemini">Capgemini</option>
                     <option value="Flipkart">Flipkart</option>
                     <option value="Swiggy">Swiggy</option>
+                    <option value="Zomato">Zomato</option>
                     <option value="Uber">Uber</option>
                     <option value="Atlassian">Atlassian</option>
                     <option value="Razorpay">Razorpay</option>
+                    <option value="PayTM">PayTM</option>
+                    <option value="Walmart Global Tech">Walmart Global Tech</option>
+                    <option value="Oracle">Oracle</option>
                   </>
                 )}
               </select>
@@ -230,9 +243,11 @@ export default function ProfileEditor({ onAnalyze, loading, targets }) {
                 value={selectedRole} 
                 onChange={(e) => setSelectedRole(e.target.value)}
               >
-                {targets?.roles?.map(r => (
-                  <option key={r.id} value={r.name}>{r.name}</option>
-                )) || (
+                {targets?.roles?.length > 0 ? (
+                  targets.roles.map(r => (
+                    <option key={r.id} value={r.name}>{r.name}</option>
+                  ))
+                ) : (
                   <>
                     <option value="Software Developer">Software Developer</option>
                     <option value="Backend Engineer">Backend Engineer</option>
@@ -243,6 +258,7 @@ export default function ProfileEditor({ onAnalyze, loading, targets }) {
                     <option value="Data Scientist">Data Scientist</option>
                     <option value="ML Engineer">ML Engineer</option>
                     <option value="Mobile App Developer">Mobile App Developer</option>
+                    <option value="Cyber Security Analyst">Cyber Security Analyst</option>
                   </>
                 )}
               </select>

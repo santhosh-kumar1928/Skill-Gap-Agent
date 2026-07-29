@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Cpu, Terminal, Compass, Zap, ShieldCheck } from 'lucide-react';
+import { Cpu, Terminal, Compass, Zap } from 'lucide-react';
 import ProfileEditor from './components/ProfileEditor.jsx';
 import SkillGapReport from './components/SkillGapReport.jsx';
 import ApiTester from './components/ApiTester.jsx';
 import IntelligenceBrowser from './components/IntelligenceBrowser.jsx';
+import { DEFAULT_TARGETS } from './data/knowledgeData.js';
+import { analyzeSkillGapClient } from './data/skillGapEngineClient.js';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('analyzer'); // 'analyzer', 'api', 'browser'
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [targets, setTargets] = useState({ companies: [], roles: [] });
+  const [targets, setTargets] = useState(DEFAULT_TARGETS);
 
   useEffect(() => {
-    // Fetch available targets from backend
+    // Fetch available targets from backend if running, otherwise keep DEFAULT_TARGETS
     fetch('/api/targets')
-      .then(res => res.json())
-      .then(data => setTargets(data))
-      .catch(err => console.error("Failed to load targets metadata:", err));
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.companies && data.companies.length > 0) {
+          setTargets(data);
+        }
+      })
+      .catch(err => console.error("Failed to load targets metadata from server, using built-in intelligence data:", err));
   }, []);
 
   const handleAnalyze = async (payload) => {
@@ -27,11 +33,16 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
-      setReportData(data);
+      if (res.ok) {
+        const data = await res.json();
+        setReportData(data);
+      } else {
+        throw new Error('Server returned non-200 response');
+      }
     } catch (err) {
-      console.error("Skill Gap Analysis error:", err);
-      alert("Error connecting to Skill Gap Agent server.");
+      console.warn("Backend server offline or unreachable. Executing client-side Skill Gap Agent fallback...", err);
+      const fallbackResult = analyzeSkillGapClient(payload);
+      setReportData(fallbackResult);
     } finally {
       setLoading(false);
     }
